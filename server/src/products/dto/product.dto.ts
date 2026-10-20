@@ -1,5 +1,3 @@
-import { CategoryDto } from "../../categories/dto/category.dto.js";
-import { Prisma } from "../../generated/prisma/client.js";
 import { CartItemDto } from "../../cart-items/dto/cart-item.dto.js";
 
 export class ProductDto {
@@ -8,11 +6,10 @@ export class ProductDto {
   description: string;
   image: string;
   quantity: number;
-  price: Prisma.Decimal;
+  price: string;
   slug: string;
-  cartItems: CartItemDto[];
+  cartItems?: CartItemDto[];
   categoryId: string;
-  category: CategoryDto;
   createdAt: Date;
   updatedAt: Date;
 }

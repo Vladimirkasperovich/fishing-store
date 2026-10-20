@@ -4,7 +4,7 @@ export class UserDto {
   id: string;
   name: string;
   email: string;
-  cart: CartDto | null;
+  cart?: CartDto | null;
   createdAt: Date;
   updatedAt: Date;
 }

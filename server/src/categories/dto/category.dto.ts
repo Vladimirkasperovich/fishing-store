@@ -5,7 +5,6 @@ export class CategoryDto {
   name: string;
   slug: string;
   image: string;
-  products: ProductDto[];
   parentId: string | null;
   createdAt: Date;
   updatedAt: Date;
