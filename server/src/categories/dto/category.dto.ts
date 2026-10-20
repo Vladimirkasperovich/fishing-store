@@ -1,5 +1,3 @@
-import { ProductDto } from "../../products/dto/product.dto.js";
-
 export class CategoryDto {
   id: string;
   name: string;
