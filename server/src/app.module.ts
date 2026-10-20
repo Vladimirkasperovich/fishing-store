@@ -1,13 +1,14 @@
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller.js";
-import { AppService } from "./app.service.js";
+
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "node:path";
 import { PrismaModule } from "./prisma/prisma.module.js";
 import { ConfigModule } from "@nestjs/config";
-import { CategoriesModule } from './categories/categories.module.js';
-import { ProductsModule } from './products/products.module.js';
-import { UserModule } from './user/user.module.js';
+import { CategoriesModule } from "./categories/categories.module.js";
+import { ProductsModule } from "./products/products.module.js";
+import { CartItemsModule } from "./cart-items/cart-items.module.js";
+import { UsersModule } from './users/users.module.js';
+import { CartsModule } from './carts/carts.module.js';
 
 @Module({
   imports: [
@@ -19,9 +20,9 @@ import { UserModule } from './user/user.module.js';
     PrismaModule,
     CategoriesModule,
     ProductsModule,
-    UserModule,
+    CartItemsModule,
+    UsersModule,
+    CartsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
