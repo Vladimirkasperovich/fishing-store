@@ -1,34 +1,59 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CategoriesService } from './categories.service.js';
-import { CreateCategoryDto } from './dto/create-category.dto.js';
-import { UpdateCategoryDto } from './dto/update-category.dto.js';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from "@nestjs/common";
+import { CategoriesService } from "./categories.service.js";
+import { CreateCategoryDto } from "./dto/create-category.dto.js";
+import { UpdateCategoryDto } from "./dto/update-category.dto.js";
+import { CategoryDto } from "./dto/category.dto.js";
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from "@nestjs/swagger";
 
-@Controller('categories')
+@ApiTags("categories")
+@Controller("categories")
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
+  @ApiCreatedResponse({ description: "Category has been successfully created", type: CategoryDto })
+  create(@Body() createCategoryDto: CreateCategoryDto): Promise<CategoryDto> {
     return this.categoriesService.create(createCategoryDto);
   }
 
   @Get()
-  findAll() {
+  @ApiOkResponse({ type: CategoryDto, isArray: true })
+  findAll(): Promise<CategoryDto[]> {
     return this.categoriesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  @Get(":id")
+  @ApiParam({
+    name: "id",
+    type: String,
+    format: "uuid",
+    description: "UUID category",
+  })
+  @ApiBadRequestResponse({
+    description: "Invalid category UUID",
+  })
+  @ApiNotFoundResponse({
+    description: "Category not found",
+  })
+  @ApiOkResponse({ type: CategoryDto })
+  findOne(@Param("id", ParseUUIDPipe) id: string): Promise<CategoryDto> {
+    return this.categoriesService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+    return this.categoriesService.update(id, updateCategoryDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+  @Delete(":id")
+  remove(@Param("id") id: string) {
+    return this.categoriesService.remove(id);
   }
 }
