@@ -5,6 +5,7 @@ import { UpdateCategoryDto } from "./dto/update-category.dto.js";
 import { CategoryDto } from "./dto/category.dto.js";
 import {
   ApiBadRequestResponse,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -19,6 +20,9 @@ export class CategoriesController {
 
   @Post()
   @ApiCreatedResponse({ description: "Category has been successfully created", type: CategoryDto })
+  @ApiConflictResponse({
+    description: "Category slug already exists",
+  })
   create(@Body() createCategoryDto: CreateCategoryDto): Promise<CategoryDto> {
     return this.categoriesService.create(createCategoryDto);
   }
