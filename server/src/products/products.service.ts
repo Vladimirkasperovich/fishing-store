@@ -29,8 +29,10 @@ export class ProductsService {
     }
   }
 
-  async findAll(): Promise<ProductDto[]> {
-    const products = await this.prismaService.product.findMany();
+  async findAll(categoryId?: string, search?: string): Promise<ProductDto[]> {
+    const products = await this.prismaService.product.findMany({
+      where: { categoryId, name: { contains: search, mode: "insensitive" } },
+    });
     return products.map((product) => ({ ...product, price: product.price.toString() }));
   }
 
@@ -66,7 +68,10 @@ export class ProductsService {
     }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} product`;
+  async remove(id: string): Promise<ProductDto> {
+    await this.findOne(id);
+    const product = await this.prismaService.product.delete({ where: { id } });
+
+    return { ...product, price: product.price.toString() };
   }
 }

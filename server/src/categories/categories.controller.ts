@@ -9,6 +9,7 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from "@nestjs/swagger";
@@ -19,6 +20,7 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
+  @ApiOperation({ summary: "Create category" })
   @ApiCreatedResponse({ description: "Category has been successfully created", type: CategoryDto })
   @ApiConflictResponse({
     description: "Category slug already exists",
@@ -28,12 +30,14 @@ export class CategoriesController {
   }
 
   @Get()
+  @ApiOperation({ summary: "Get categories" })
   @ApiOkResponse({ type: CategoryDto, isArray: true })
   findAll(): Promise<CategoryDto[]> {
     return this.categoriesService.findAll();
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get category by id" })
   @ApiParam({
     name: "id",
     type: String,
@@ -52,6 +56,7 @@ export class CategoriesController {
   }
 
   @Patch(":id")
+  @ApiOperation({ summary: "Update category" })
   @ApiParam({
     name: "id",
     type: String,
@@ -76,6 +81,7 @@ export class CategoriesController {
   }
 
   @Delete(":id")
+  @ApiOperation({ summary: "Delete category" })
   @ApiParam({
     name: "id",
     type: String,
