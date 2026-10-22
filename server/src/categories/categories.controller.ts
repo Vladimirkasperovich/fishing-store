@@ -52,12 +52,47 @@ export class CategoriesController {
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+  @ApiParam({
+    name: "id",
+    type: String,
+    format: "uuid",
+    description: "UUID category",
+  })
+  @ApiOkResponse({
+    description: "Category updated successfully",
+    type: CategoryDto,
+  })
+  @ApiBadRequestResponse({
+    description: "Invalid UUID or request body",
+  })
+  @ApiNotFoundResponse({
+    description: "Category or parent category not found",
+  })
+  update(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ): Promise<CategoryDto> {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  @ApiParam({
+    name: "id",
+    type: String,
+    format: "uuid",
+    description: "UUID category",
+  })
+  @ApiOkResponse({
+    description: "Category deleted successfully",
+    type: CategoryDto,
+  })
+  @ApiBadRequestResponse({
+    description: "Invalid category UUID",
+  })
+  @ApiNotFoundResponse({
+    description: "Category not found",
+  })
+  remove(@Param("id", ParseUUIDPipe) id: string): Promise<CategoryDto> {
     return this.categoriesService.remove(id);
   }
 }

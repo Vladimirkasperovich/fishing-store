@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateCategoryDto } from "./dto/create-category.dto.js";
 import { UpdateCategoryDto } from "./dto/update-category.dto.js";
 import { PrismaService } from "../prisma/prisma.service.js";
@@ -32,11 +37,35 @@ export class CategoriesService {
     return category;
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<CategoryDto> {
+    await this.findOne(id);
+
+    if (updateCategoryDto.parentId !== undefined && updateCategoryDto.parentId !== null) {
+      let currentParentId: string | null = updateCategoryDto.parentId;
+
+      while (currentParentId !== null) {
+        if (currentParentId === id) {
+          throw new BadRequestException("Category cannot be moved into itself or its descendants");
+        }
+
+        const parent: CategoryDto = await this.findOne(currentParentId);
+
+        currentParentId = parent.parentId;
+      }
+    }
+
+    return this.prismaService.category.update({
+      where: { id },
+      data: updateCategoryDto,
+    });
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} category`;
+  async remove(id: string): Promise<CategoryDto> {
+    await this.findOne(id);
+    const count = await this.prismaService.category.count({ where: { parentId: id } });
+    if (count > 0) {
+      throw new ConflictException("Category has child categories");
+    }
+    return this.prismaService.category.delete({ where: { id } });
   }
 }
