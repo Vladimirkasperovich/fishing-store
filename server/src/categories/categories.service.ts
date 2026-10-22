@@ -64,6 +64,7 @@ export class CategoriesService {
     await this.findOne(id);
     const count = await this.prismaService.category.count({ where: { parentId: id } });
     if (count > 0) {
+      1;
       throw new ConflictException("Category has child categories");
     }
     return this.prismaService.category.delete({ where: { id } });
