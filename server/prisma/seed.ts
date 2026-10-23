@@ -27,12 +27,21 @@ const categories: CategorySeed[] = [
   { name: "Лески и шнуры", slug: "lines", image: image("braided-line") },
   { name: "Приманки", slug: "lures", image: image("minnow-wobbler") },
   { name: "Оснастка", slug: "terminal-tackle", image: image("fishing-hooks") },
-  { name: "Кормушки и грузила", slug: "feeders-and-weights", image: image("method-feeder") },
+  {
+    name: "Кормушки и грузила",
+    slug: "feeders-and-weights",
+    image: image("method-feeder"),
+  },
   { name: "Хранение и сумки", slug: "storage", image: image("tackle-box") },
   { name: "Оборудование", slug: "equipment", image: image("landing-net") },
   { name: "Одежда", slug: "clothing", image: image("fishing-waders") },
 
-  { name: "Фидерные удилища", slug: "feeder-rods", image: image("feeder-rod"), parentSlug: "rods" },
+  {
+    name: "Фидерные удилища",
+    slug: "feeder-rods",
+    image: image("feeder-rod"),
+    parentSlug: "rods",
+  },
   {
     name: "Безынерционные катушки",
     slug: "spinning-reels",
@@ -45,14 +54,24 @@ const categories: CategorySeed[] = [
     image: image("braided-line"),
     parentSlug: "lines",
   },
-  { name: "Воблеры", slug: "wobblers", image: image("minnow-wobbler"), parentSlug: "lures" },
+  {
+    name: "Воблеры",
+    slug: "wobblers",
+    image: image("minnow-wobbler"),
+    parentSlug: "lures",
+  },
   {
     name: "Силиконовые приманки",
     slug: "soft-lures",
     image: image("soft-plastic-lures"),
     parentSlug: "lures",
   },
-  { name: "Крючки", slug: "hooks", image: image("fishing-hooks"), parentSlug: "terminal-tackle" },
+  {
+    name: "Крючки",
+    slug: "hooks",
+    image: image("fishing-hooks"),
+    parentSlug: "terminal-tackle",
+  },
   {
     name: "Фидерные кормушки",
     slug: "feeders",
@@ -71,7 +90,12 @@ const categories: CategorySeed[] = [
     image: image("fishing-bag"),
     parentSlug: "storage",
   },
-  { name: "Подсаки", slug: "landing-nets", image: image("landing-net"), parentSlug: "equipment" },
+  {
+    name: "Подсаки",
+    slug: "landing-nets",
+    image: image("landing-net"),
+    parentSlug: "equipment",
+  },
   {
     name: "Кресла",
     slug: "fishing-chairs",
@@ -90,7 +114,12 @@ const categories: CategorySeed[] = [
     image: image("fishing-shelter"),
     parentSlug: "equipment",
   },
-  { name: "Вейдерсы", slug: "waders", image: image("fishing-waders"), parentSlug: "clothing" },
+  {
+    name: "Вейдерсы",
+    slug: "waders",
+    image: image("fishing-waders"),
+    parentSlug: "clothing",
+  },
 ];
 
 type ProductSeed = {
@@ -241,10 +270,26 @@ const products: ProductSeed[] = [
   },
 ];
 
+type UserSeed = {
+  name: string;
+  email: string;
+};
+
+const users: UserSeed[] = [
+  {
+    name: "Test User",
+    email: "test@example.com",
+  },
+  {
+    name: "Demo User",
+    email: "demo@example.com",
+  },
+];
+
 async function main() {
   const categoryIds = new Map<string, string>();
 
-  // Сначала создаём родительские категории, затем дочерние.
+  // 1. Создаём родительские и дочерние категории.
   for (const category of categories) {
     const parentId = category.parentSlug ? categoryIds.get(category.parentSlug) : null;
 
@@ -270,7 +315,7 @@ async function main() {
     categoryIds.set(category.slug, record.id);
   }
 
-  // Создаём товары и связываем их с категориями.
+  // 2. Создаём товары и связываем их с категориями.
   for (const product of products) {
     const categoryId = categoryIds.get(product.categorySlug);
 
@@ -300,7 +345,26 @@ async function main() {
     });
   }
 
-  console.log(`Seed completed: ${categories.length} categories and ${products.length} products.`);
+  // 3. Создаём тестовых пользователей.
+  for (const user of users) {
+    const record = await prisma.user.upsert({
+      where: { email: user.email },
+      update: {
+        name: user.name,
+      },
+      create: {
+        name: user.name,
+        email: user.email,
+        passwordHash: "TEST_ONLY_NO_LOGIN",
+      },
+    });
+
+    console.log(`User: ${record.email}, ID: ${record.id}`);
+  }
+
+  console.log(
+    `Seed completed: ${categories.length} categories, ${products.length} products and ${users.length} users.`,
+  );
 }
 
 main()
