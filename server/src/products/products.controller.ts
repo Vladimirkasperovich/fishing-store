@@ -25,7 +25,7 @@ import {
 } from "@nestjs/swagger";
 import { GetProductsQueryDto } from "./dto/get-products-query.dto.js";
 
-@ApiTags("products")
+@ApiTags("Products")
 @Controller("products")
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
