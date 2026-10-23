@@ -29,9 +29,14 @@ export class ProductsService {
     }
   }
 
-  async findAll(categoryId?: string, search?: string): Promise<ProductDto[]> {
+  async findAll(categoryId?: string, search?: string, page = 1, limit = 10): Promise<ProductDto[]> {
     const products = await this.prismaService.product.findMany({
       where: { categoryId, name: { contains: search, mode: "insensitive" } },
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     return products.map((product) => ({ ...product, price: product.price.toString() }));
   }

@@ -21,9 +21,9 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from "@nestjs/swagger";
+import { GetProductsQueryDto } from "./dto/get-products-query.dto.js";
 
 @ApiTags("products")
 @Controller("products")
@@ -51,33 +51,17 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: "Get products" })
-  @ApiQuery({
-    name: "search",
-    required: false,
-    type: String,
-    description: "Search products by name",
-  })
-  @ApiQuery({
-    name: "categoryId",
-    required: false,
-    type: String,
-    format: "uuid",
-    description: "Filter products by category ID",
-  })
   @ApiOkResponse({
     description: "List of products",
     type: ProductDto,
     isArray: true,
   })
   @ApiBadRequestResponse({
-    description: "Invalid category UUID",
+    description: "Invalid query parameters",
   })
-  findAll(
-    @Query("categoryId", new ParseUUIDPipe({ optional: true }))
-    categoryId?: string,
-    @Query("search") search?: string,
-  ): Promise<ProductDto[]> {
-    return this.productsService.findAll(categoryId, search);
+  findAll(@Query() query: GetProductsQueryDto): Promise<ProductDto[]> {
+    const { categoryId, search, page, limit } = query;
+    return this.productsService.findAll(categoryId, search, page, limit);
   }
 
   @Get(":id")
