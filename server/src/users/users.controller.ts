@@ -42,7 +42,6 @@ export class UsersController {
   @ApiNotFoundResponse({
     description: "User not found",
   })
-  @Get(":id")
   findOne(@Param("id", ParseUUIDPipe) id: string): Promise<UserDto> {
     return this.usersService.findOne(id);
   }
