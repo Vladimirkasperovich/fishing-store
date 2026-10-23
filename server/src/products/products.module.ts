@@ -8,5 +8,6 @@ import { CategoriesModule } from "../categories/categories.module.js";
   imports: [PrismaModule, CategoriesModule],
   controllers: [ProductsController],
   providers: [ProductsService],
+  exports: [ProductsService],
 })
 export class ProductsModule {}

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateCartDto } from "./dto/create-cart.dto.js";
 import { CartDto } from "./dto/cart.dto.js";
 import { PrismaService } from "../prisma/prisma.service.js";
@@ -21,5 +21,11 @@ export class CartsService {
       where: { userId: id },
       include: { items: true },
     });
+  }
+
+  async findOne(id: string): Promise<CartDto> {
+    const cart = await this.prismaService.cart.findUnique({ where: { id } });
+    if (!cart) throw new NotFoundException("Cart not found");
+    return cart;
   }
 }

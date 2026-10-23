@@ -8,5 +8,6 @@ import { UsersModule } from "../users/users.module.js";
   imports: [PrismaModule, UsersModule],
   controllers: [CartsController],
   providers: [CartsService],
+  exports: [CartsService],
 })
 export class CartsModule {}
