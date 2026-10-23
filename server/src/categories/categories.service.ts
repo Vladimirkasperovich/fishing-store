@@ -8,23 +8,15 @@ import { CreateCategoryDto } from "./dto/create-category.dto.js";
 import { UpdateCategoryDto } from "./dto/update-category.dto.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { CategoryDto } from "./dto/category.dto.js";
-import { Prisma } from "../generated/prisma/client.js";
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prismaService: PrismaService) {}
   async create(createCategoryDto: CreateCategoryDto): Promise<CategoryDto> {
-    try {
-      if (createCategoryDto.parentId != null) {
-        await this.findOne(createCategoryDto.parentId);
-      }
-      return await this.prismaService.category.create({ data: createCategoryDto });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new ConflictException("Category slug already exists");
-      }
-      throw e;
+    if (createCategoryDto.parentId != null) {
+      await this.findOne(createCategoryDto.parentId);
     }
+    return this.prismaService.category.create({ data: createCategoryDto });
   }
 
   findAll(): Promise<CategoryDto[]> {

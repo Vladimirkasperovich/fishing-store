@@ -1,10 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateProductDto } from "./dto/create-product.dto.js";
 import { UpdateProductDto } from "./dto/update-product.dto.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { ProductDto } from "./dto/product.dto.js";
 import { CategoriesService } from "../categories/categories.service.js";
-import { Prisma } from "../generated/prisma/client.js";
 
 @Injectable()
 export class ProductsService {
@@ -15,18 +14,11 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto): Promise<ProductDto> {
     await this.categoriesService.findOne(createProductDto.categoryId);
 
-    try {
-      const product = await this.prismaService.product.create({
-        data: createProductDto,
-      });
+    const product = await this.prismaService.product.create({
+      data: createProductDto,
+    });
 
-      return { ...product, price: product.price.toString() };
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new ConflictException("Product slug already exists");
-      }
-      throw e;
-    }
+    return { ...product, price: product.price.toString() };
   }
 
   async findAll(categoryId?: string, search?: string, page = 1, limit = 10): Promise<ProductDto[]> {
@@ -58,19 +50,12 @@ export class ProductsService {
       await this.categoriesService.findOne(updateProductDto.categoryId);
     }
 
-    try {
-      const product = await this.prismaService.product.update({
-        where: { id },
-        data: updateProductDto,
-      });
+    const product = await this.prismaService.product.update({
+      where: { id },
+      data: updateProductDto,
+    });
 
-      return { ...product, price: product.price.toString() };
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new ConflictException("Product slug already exists");
-      }
-      throw e;
-    }
+    return { ...product, price: product.price.toString() };
   }
 
   async remove(id: string): Promise<ProductDto> {
