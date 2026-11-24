@@ -9,6 +9,8 @@ import { ProductsModule } from "./products/products.module.js";
 import { CartItemsModule } from "./cart-items/cart-items.module.js";
 import { UsersModule } from './users/users.module.js';
 import { CartsModule } from './carts/carts.module.js';
+import { SessionModule } from './session/session.module.js';
+import { TokenModule } from './token/token.module.js';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { CartsModule } from './carts/carts.module.js';
     CartItemsModule,
     UsersModule,
     CartsModule,
+    SessionModule,
+    TokenModule,
   ],
 })
 export class AppModule {}
