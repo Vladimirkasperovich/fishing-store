@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { TokenService } from "./token.service.js";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { ACCESS_TOKEN_EXPIRES_IN } from "./constants/token.constants.js";
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { ConfigService } from "@nestjs/config";
       useFactory: (config: ConfigService) => ({
         secret: config.getOrThrow<string>("JWT_ACCESS_SECRET"),
         signOptions: {
-          expiresIn: "15m",
+          expiresIn: ACCESS_TOKEN_EXPIRES_IN,
         },
       }),
     }),
