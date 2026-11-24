@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module.js';
 import { CartsModule } from './carts/carts.module.js';
 import { SessionModule } from './session/session.module.js';
 import { TokenModule } from './token/token.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TokenModule } from './token/token.module.js';
     CartsModule,
     SessionModule,
     TokenModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
