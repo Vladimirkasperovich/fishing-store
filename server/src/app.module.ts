@@ -14,7 +14,7 @@ import { CategoryModule } from "./category/category.module.js";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, expandVariables: true }),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), "public"),
       serveRoot: "/",
