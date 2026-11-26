@@ -270,22 +270,6 @@ const products: ProductSeed[] = [
   },
 ];
 
-type UserSeed = {
-  name: string;
-  email: string;
-};
-
-const users: UserSeed[] = [
-  {
-    name: "Test User",
-    email: "test@example.com",
-  },
-  {
-    name: "Demo User",
-    email: "demo@example.com",
-  },
-];
-
 async function main() {
   const categoryIds = new Map<string, string>();
 
@@ -345,26 +329,7 @@ async function main() {
     });
   }
 
-  // 3. Создаём тестовых пользователей.
-  for (const user of users) {
-    const record = await prisma.user.upsert({
-      where: { email: user.email },
-      update: {
-        name: user.name,
-      },
-      create: {
-        name: user.name,
-        email: user.email,
-        passwordHash: "TEST_ONLY_NO_LOGIN",
-      },
-    });
-
-    console.log(`User: ${record.email}, ID: ${record.id}`);
-  }
-
-  console.log(
-    `Seed completed: ${categories.length} categories, ${products.length} products and ${users.length} users.`,
-  );
+  console.log(`Seed completed: ${categories.length} categories, ${products.length} products`);
 }
 
 main()
