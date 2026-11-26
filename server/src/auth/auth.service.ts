@@ -4,6 +4,8 @@ import { RegisterDto } from "./dto/register.dto.js";
 import { UserService } from "../user/user.service.js";
 import { AuthServiceResponse } from "./types/auth-service-response.types.js";
 import { SessionService } from "../session/session.service.js";
+import { hash } from "argon2";
+import { randomUUID } from "node:crypto";
 
 @Injectable()
 export class AuthService {
@@ -14,8 +16,15 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto): Promise<AuthServiceResponse> {
-    const user = await this.userService.create(dto);
-    const { accessToken, refreshToken } = await this.sessionService.create(user.id);
-    return { accessToken, refreshToken, user };
+    const { name, email, password } = dto;
+    const userId = randomUUID();
+    const passwordHash = await hash(password);
+    const preparedSession = await this.sessionService.prepare(userId);
+
+    return this.prismaService.$transaction(async (tx) => {
+      const user = await this.userService.create({ name, email, passwordHash }, tx, userId);
+      await this.sessionService.create(userId, tx, preparedSession.sessionData);
+      return { ...preparedSession.tokens, user };
+    });
   }
 }

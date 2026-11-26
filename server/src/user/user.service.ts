@@ -2,7 +2,6 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 import type { UserPublic } from "./types/user-public.types.js";
 import { CreateUser } from "./types/create-user.types.js";
-import { hash } from "argon2";
 import { Prisma } from "../generated/prisma/client.js";
 
 @Injectable()
@@ -16,15 +15,16 @@ export class UserService {
     });
   }
 
-  async create(data: CreateUser): Promise<UserPublic> {
-    const { name, email, password } = data;
-    const passwordHash = await hash(password);
-
-    let user: UserPublic;
+  async create(
+    data: CreateUser,
+    tx: Prisma.TransactionClient,
+    userId?: string,
+  ): Promise<UserPublic> {
+    const { name, email, passwordHash } = data;
 
     try {
-      user = await this.prismaService.user.create({
-        data: { name, email, passwordHash },
+      return await tx.user.create({
+        data: { id: userId, name, email, passwordHash },
         select: { id: true, name: true, email: true },
       });
     } catch (e) {
@@ -35,6 +35,5 @@ export class UserService {
       }
       throw e;
     }
-    return user;
   }
 }
