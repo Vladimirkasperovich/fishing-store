@@ -16,7 +16,14 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<AuthResponse> {
     const { accessToken, refreshToken, user } = await this.authService.register(body);
+    this.setRefreshTokenCookie(refreshToken, response);
+    return {
+      accessToken,
+      user,
+    };
+  }
 
+  private setRefreshTokenCookie(refreshToken: string, response: Response): void {
     response.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -24,10 +31,5 @@ export class AuthController {
       path: "/auth",
       maxAge: REFRESH_TOKEN_TTL_MS,
     });
-
-    return {
-      accessToken,
-      user,
-    };
   }
 }

@@ -19,11 +19,12 @@ export class SessionService {
 
   async create(
     userId: string,
-    tx: Prisma.TransactionClient,
     sessionData: PreparedSessionData,
+    tx?: Prisma.TransactionClient,
   ): Promise<void> {
     const { sessionId, expiresAt, refreshTokenHash } = sessionData;
-    await tx.session.create({
+    const client = tx ?? this.prismaService;
+    await client.session.create({
       data: {
         id: sessionId,
         userId,

@@ -7,7 +7,7 @@ import { SessionModule } from "../session/session.module.js";
 import { TokenModule } from "../token/token.module.js";
 
 @Module({
-  imports: [PrismaModule, UserModule, SessionModule, TokenModule],
+  imports: [PrismaModule, UserModule, SessionModule],
   controllers: [AuthController],
   providers: [AuthService],
 })
