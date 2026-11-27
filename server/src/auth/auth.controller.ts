@@ -4,6 +4,7 @@ import { RegisterDto } from "./dto/register.dto.js";
 import type { Response } from "express";
 import { AuthResponse } from "./types/auth-response.types.js";
 import { REFRESH_TOKEN_TTL_MS } from "../token/constants/token.constants.js";
+import { LoginDto } from "./dto/login.dto.js";
 
 @Controller("auth")
 export class AuthController {
@@ -23,6 +24,19 @@ export class AuthController {
     };
   }
 
+  @Post("login")
+  @HttpCode(HttpStatus.OK)
+  async login(
+    @Body() body: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<AuthResponse> {
+    const { accessToken, refreshToken, user } = await this.authService.login(body);
+    this.setRefreshTokenCookie(refreshToken, response);
+    return {
+      accessToken,
+      user,
+    };
+  }
   private setRefreshTokenCookie(refreshToken: string, response: Response): void {
     response.cookie("refresh_token", refreshToken, {
       httpOnly: true,

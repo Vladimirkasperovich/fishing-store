@@ -4,7 +4,6 @@ import { AuthController } from "./auth.controller.js";
 import { PrismaModule } from "../prisma/prisma.module.js";
 import { UserModule } from "../user/user.module.js";
 import { SessionModule } from "../session/session.module.js";
-import { TokenModule } from "../token/token.module.js";
 
 @Module({
   imports: [PrismaModule, UserModule, SessionModule],
